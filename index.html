@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="AI Student Assistant Chatbot — Code Sangram Online Hackathon 2026 by Tanishq Gupta, S.B. Jain Institute of Technology, Nagpur"/>
+<meta name="author" content="Tanishq Gupta"/>
+<meta name="keywords" content="AI Chatbot, Student Assistant, NLP, Machine Learning, Code Sangram 2026"/>
+<meta property="og:title" content="Study Buddy AI — AI Student Assistant"/>
+<meta property="og:description" content="Intelligent academic support chatbot powered by AI. Ask anything, get instant answers 24/7."/>
+<title>Study Buddy AI | Code Sangram 2026 — Tanishq Gupta</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root{
+  --p:#534AB7;--p2:#3C3489;--p3:#26215C;
+  --acc:#D4537E;--acc2:#993556;
+  --teal:#1D9E75;--teal2:#5DCAA5;
+  --txt:#CECBF6;--txt2:rgba(175,169,236,0.7);--txt3:rgba(175,169,236,0.35);
+  --bg:#08061a;--card:#0d0b1e;
+  --b1:rgba(167,139,250,0.12);--b2:rgba(83,74,183,0.32);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── ANIMATED BG ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.07}
+.orb1{width:600px;height:600px;top:-200px;left:-200px;background:#534AB7;animation:oa 14s ease-in-out infinite}
+.orb2{width:500px;height:500px;bottom:-150px;right:-150px;background:#993556;animation:ob 18s ease-in-out infinite}
+.orb3{width:350px;height:350px;top:35%;left:55%;background:#1D9E75;animation:oc 11s ease-in-out infinite}
+.orb4{width:250px;height:250px;top:60%;left:20%;background:#534AB7;animation:oa 9s ease-in-out infinite reverse}
+@keyframes oa{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.45) translate(50px,35px)}}
+@keyframes ob{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.3) translate(-40px,-30px)}}
+@keyframes oc{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.6) translate(-40px,25px)}}
+
+/* Floating stars */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:#AFA9EC;animation:twinkle linear infinite}
+@keyframes twinkle{0%,100%{opacity:0.05;transform:scale(1)}50%{opacity:0.35;transform:scale(1.4)}}
+
+/* ── LANDING PAGE ── */
+#landing{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 20px;
+  text-align:center;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(83,74,183,0.15);
+  border:1px solid rgba(83,74,183,0.35);
+  border-radius:999px;padding:7px 18px;
+  font-size:12px;font-weight:600;color:#AFA9EC;
+  margin-bottom:32px;letter-spacing:0.5px;
+  animation:fadeDown 0.8s ease both;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:#5DCAA5;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(93,202,165,0.5)}50%{opacity:0.6;box-shadow:0 0 0 5px rgba(93,202,165,0)}}
+
+.hero-icon{
+  width:90px;height:90px;border-radius:26px;
+  background:linear-gradient(135deg,#534AB7,#993556);
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;margin:0 auto 28px;
+  box-shadow:0 20px 60px rgba(83,74,183,0.45),0 0 0 1px rgba(255,255,255,0.08);
+  animation:heroFloat 3.5s ease-in-out infinite,fadeUp 0.9s 0.1s ease both;
+}
+@keyframes heroFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+
+h1.main-title{
+  font-size:clamp(36px,6vw,64px);
+  font-weight:700;line-height:1.1;
+  letter-spacing:-2px;
+  background:linear-gradient(135deg,#AFA9EC 0%,#ED93B1 45%,#9FE1CB 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:14px;
+  animation:fadeUp 0.9s 0.2s ease both;
+}
+.subtitle{
+  font-size:16px;color:var(--txt2);line-height:1.75;
+  max-width:520px;margin:0 auto 40px;
+  animation:fadeUp 0.9s 0.3s ease both;
+}
+
+/* Feature pills */
+.feat-row{
+  display:flex;flex-wrap:wrap;gap:10px;
+  justify-content:center;margin-bottom:48px;
+  animation:fadeUp 0.9s 0.4s ease both;
+}
+.feat{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--b1);
+  border-radius:999px;padding:7px 16px;
+  font-size:13px;color:var(--txt2);font-weight:500;
+  transition:all 0.2s;
+}
+.feat:hover{background:rgba(83,74,183,0.12);border-color:var(--b2);color:var(--txt);transform:translateY(-2px)}
+.feat-ico{font-size:14px}
+
+/* Start button */
+.start-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#534AB7,#3C3489);
+  color:#EEEDFE;border:none;
+  border-radius:16px;padding:16px 40px;
+  font-size:16px;font-weight:700;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+  box-shadow:0 12px 40px rgba(83,74,183,0.5),0 0 0 1px rgba(255,255,255,0.08);
+  transition:all 0.25s;letter-spacing:-0.3px;
+  animation:fadeUp 0.9s 0.5s ease both;
+}
+.start-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 20px 60px rgba(83,74,183,0.65)}
+.start-btn:active{transform:scale(0.97)}
+.btn-arrow{transition:transform 0.2s}
+.start-btn:hover .btn-arrow{transform:translateX(4px)}
+
+/* Info cards */
+.info-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;max-width:780px;width:100%;
+  margin-top:64px;
+  animation:fadeUp 0.9s 0.6s ease both;
+}
+.info-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--b1);border-radius:20px;
+  padding:22px 20px;text-align:left;
+  transition:all 0.25s;
+}
+.info-card:hover{background:rgba(83,74,183,0.08);border-color:var(--b2);transform:translateY(-4px)}
+.info-card .ico{font-size:26px;margin-bottom:12px}
+.info-card h3{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:6px}
+.info-card p{font-size:12px;color:var(--txt3);line-height:1.7}
+
+.by{
+  margin-top:48px;
+  font-size:12px;color:rgba(175,169,236,0.25);
+  animation:fadeUp 0.9s 0.7s ease both;
+}
+.by strong{color:rgba(175,169,236,0.5)}
+
+/* ── CHAT PAGE ── */
+#chatpage{
+  display:none;
+  position:relative;z-index:2;
+  height:100vh;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.chat-wrap{
+  width:100%;max-width:840px;
+  height:calc(100vh - 32px);max-height:860px;
+  background:var(--card);
+  border:1px solid var(--b2);
+  border-radius:28px;overflow:hidden;
+  display:flex;flex-direction:column;
+  box-shadow:0 0 100px rgba(83,74,183,0.12),0 0 200px rgba(83,74,183,0.05),inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Chat header */
+.chat-header{
+  padding:16px 22px;
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg,rgba(83,74,183,0.1),rgba(38,33,92,0.04));
+  flex-shrink:0;
+}
+.chat-logo{
+  width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,#534AB7,#993556);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  box-shadow:0 6px 20px rgba(83,74,183,0.4);
+  animation:logoF 3.5s ease-in-out infinite;
+}
+@keyframes logoF{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-5px)}}
+.chat-header-txt h2{
+  font-size:15px;font-weight:700;
+  background:linear-gradient(135deg,#AFA9EC,#ED93B1);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.chat-header-txt p{font-size:11px;color:var(--txt3);margin-top:2px}
+.back-btn{
+  margin-left:auto;background:rgba(255,255,255,0.05);
+  border:1px solid var(--b1);border-radius:10px;
+  padding:6px 14px;font-size:12px;font-weight:600;
+  color:var(--txt3);cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;transition:all 0.2s;
+}
+.back-btn:hover{background:rgba(83,74,183,0.15);color:var(--txt);border-color:var(--b2)}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#5DCAA5;margin-left:4px;display:inline-block;animation:pulse 2s infinite;vertical-align:middle}
+
+/* API band */
+#apiBand{
+  padding:10px 22px;
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:rgba(212,83,126,0.04);flex-shrink:0;
+}
+#apiBand label{font-size:12px;color:rgba(237,147,177,0.75);font-weight:600;white-space:nowrap}
+#apiBand input{
+  flex:1;min-width:180px;padding:7px 12px;
+  border:1px solid rgba(212,83,126,0.25);border-radius:10px;
+  font-size:12px;background:rgba(255,255,255,0.03);
+  color:#CECBF6;font-family:'DM Mono',monospace;transition:border-color 0.2s;
+}
+#apiBand input::placeholder{color:rgba(175,169,236,0.28)}
+#apiBand input:focus{outline:none;border-color:rgba(212,83,126,0.55)}
+.conn-btn{
+  padding:7px 18px;
+  background:linear-gradient(135deg,#D4537E,#993556);
+  color:#fff;border:none;border-radius:10px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+  transition:all 0.2s;white-space:nowrap;
+}
+.conn-btn:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(212,83,126,0.4)}
+.api-note{font-size:11px;color:rgba(175,169,236,0.28);width:100%}
+
+/* Subjects */
+.subjects{
+  display:flex;gap:8px;padding:10px 22px;
+  overflow-x:auto;border-bottom:1px solid var(--b1);
+  flex-shrink:0;scrollbar-width:none;
+}
+.subjects::-webkit-scrollbar{display:none}
+.spill{
+  padding:5px 14px;border-radius:999px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--b1);
+  background:rgba(255,255,255,0.03);color:var(--txt3);
+  white-space:nowrap;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;
+}
+.spill.on{
+  background:linear-gradient(135deg,#534AB7,#3C3489);
+  color:#EEEDFE;border-color:transparent;
+  box-shadow:0 4px 16px rgba(83,74,183,0.35);
+}
+.spill:hover:not(.on){background:rgba(83,74,183,0.12);color:#AFA9EC;border-color:rgba(83,74,183,0.35);transform:translateY(-1px)}
+
+/* Messages */
+.messages{
+  flex:1;overflow-y:auto;padding:18px 22px;
+  display:flex;flex-direction:column;gap:16px;
+  scrollbar-width:thin;scrollbar-color:rgba(83,74,183,0.25) transparent;
+}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:rgba(83,74,183,0.25);border-radius:4px}
+
+/* Welcome screen */
+.welcome{text-align:center;padding:24px 16px;animation:fadeUp 0.5s ease both}
+.w-icon{
+  width:68px;height:68px;border-radius:22px;
+  background:linear-gradient(135deg,#3C3489,#26215C);
+  border:1px solid rgba(83,74,183,0.4);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;font-size:28px;
+  box-shadow:0 12px 32px rgba(83,74,183,0.3);
+  animation:heroFloat 3s ease-in-out infinite;
+}
+.welcome h3{
+  font-size:18px;font-weight:700;margin-bottom:8px;
+  background:linear-gradient(135deg,#CECBF6,#F4C0D1,#9FE1CB);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.welcome p{font-size:12px;color:var(--txt3);line-height:1.8;max-width:320px;margin:0 auto}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;justify-content:center}
+.chip{
+  padding:7px 13px;background:rgba(83,74,183,0.08);
+  border:1px solid rgba(83,74,183,0.22);border-radius:11px;
+  font-size:12px;cursor:pointer;color:rgba(175,169,236,0.75);
+  text-align:left;font-family:'Space Grotesk',sans-serif;
+  transition:all 0.2s;line-height:1.4;
+}
+.chip:hover{background:rgba(83,74,183,0.2);border-color:rgba(83,74,183,0.5);color:#CECBF6;transform:translateY(-2px);box-shadow:0 4px 14px rgba(83,74,183,0.2)}
+
+/* Message bubbles */
+.msg{display:flex;flex-direction:column;max-width:82%;animation:msgPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both}
+@keyframes msgPop{from{opacity:0;transform:translateY(14px) scale(0.93)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end;align-items:flex-end}
+.msg.bot{align-self:flex-start;align-items:flex-start}
+.bot-lbl{font-size:10px;color:#7F77DD;margin-bottom:4px;font-weight:700;letter-spacing:0.9px}
+.bubble{
+  padding:12px 16px;border-radius:20px;
+  font-size:13.5px;line-height:1.75;
+  white-space:pre-wrap;word-break:break-word;
+  font-family:'Space Grotesk',sans-serif;
+}
+.msg.user .bubble{
+  background:linear-gradient(135deg,#534AB7,#3C3489);
+  color:#EEEDFE;border-bottom-right-radius:5px;
+  box-shadow:0 6px 20px rgba(83,74,183,0.35);
+}
+.msg.bot .bubble{
+  background:rgba(255,255,255,0.04);color:rgba(175,169,236,0.9);
+  border-bottom-left-radius:5px;
+  border:1px solid rgba(167,139,250,0.13);
+  box-shadow:0 4px 16px rgba(0,0,0,0.15);
+}
+
+/* Typing dots */
+.tdots{display:flex;gap:5px;align-items:center;padding:13px 17px}
+.td{width:8px;height:8px;border-radius:50%;background:#7F77DD;animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:0.2s}.td:nth-child(3){animation-delay:0.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:0.7}30%{transform:translateY(-9px);opacity:1}}
+
+/* Input area */
+.input-area{
+  padding:12px 22px;border-top:1px solid var(--b1);
+  display:flex;gap:10px;align-items:flex-end;
+  background:rgba(0,0,0,0.18);flex-shrink:0;
+}
+.input-area textarea{
+  flex:1;border:1px solid var(--b2);border-radius:15px;
+  padding:11px 15px;font-size:13px;
+  font-family:'Space Grotesk',sans-serif;
+  resize:none;background:rgba(255,255,255,0.03);
+  color:#CECBF6;max-height:110px;line-height:1.55;min-height:42px;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.input-area textarea::placeholder{color:var(--txt3)}
+.input-area textarea:focus{outline:none;border-color:#534AB7;box-shadow:0 0 0 4px rgba(83,74,183,0.1)}
+.send-btn{
+  width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,#534AB7,#3C3489);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;
+  box-shadow:0 6px 20px rgba(83,74,183,0.4);color:#fff;
+}
+.send-btn:hover{transform:scale(1.1) translateY(-2px);box-shadow:0 10px 28px rgba(83,74,183,0.6)}
+.send-btn:active{transform:scale(0.93)}
+.send-btn:disabled{opacity:0.3;cursor:default;transform:none;box-shadow:none}
+
+/* Footer */
+.chat-footer{
+  padding:8px 22px;border-top:1px solid rgba(255,255,255,0.04);
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.chat-footer span{font-size:11px;color:rgba(167,139,250,0.18);font-weight:500}
+.clr-btn{
+  font-size:11px;color:rgba(167,139,250,0.25);background:none;
+  border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;
+  padding:3px 9px;border-radius:7px;transition:all 0.15s;
+}
+.clr-btn:hover{background:rgba(83,74,183,0.12);color:#AFA9EC}
+
+/* Confetti */
+.conf{
+  position:fixed;border-radius:3px;pointer-events:none;z-index:9999;
+  animation:confFall linear forwards;
+}
+@keyframes confFall{
+  0%{opacity:1;transform:translateY(-20px) rotate(0deg)}
+  100%{opacity:0;transform:translateY(400px) rotate(720deg)}
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(83,74,183,0.3);border-radius:4px}
+
+/* Mobile */
+@media(max-width:600px){
+  h1.main-title{font-size:36px;letter-spacing:-1px}
+  .info-grid{grid-template-columns:1fr 1fr}
+  .chat-wrap{border-radius:20px;height:calc(100vh - 16px)}
+  #chatpage{padding:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
+<div class="stars" id="stars"></div>
+
+<!-- ══════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════ -->
+<div id="landing">
+  <div class="badge">
+    <div class="badge-dot"></div>
+    Code Sangram Online Hackathon 2026 &nbsp;•&nbsp; AI Domain
+  </div>
+
+  <div class="hero-icon">🎓</div>
+
+  <h1 class="main-title">Study Buddy AI</h1>
+  <p class="subtitle">
+    Your intelligent academic bestie — powered by advanced AI.
+    Get instant answers, concept explanations, and exam prep support 24/7. No cap.
+  </p>
+
+  <div class="feat-row">
+    <div class="feat"><span class="feat-ico">⚡</span> Instant responses</div>
+    <div class="feat"><span class="feat-ico">🧠</span> NLP powered</div>
+    <div class="feat"><span class="feat-ico">📚</span> 7 subjects</div>
+    <div class="feat"><span class="feat-ico">🌙</span> 24/7 available</div>
+    <div class="feat"><span class="feat-ico">💬</span> Context memory</div>
+    <div class="feat"><span class="feat-ico">🎨</span> Gen Z UI</div>
+  </div>
+
+  <button class="start-btn" onclick="goChat()">
+    Start Chatting ✨ <span class="btn-arrow">→</span>
+  </button>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="ico">🔍</div>
+      <h3>Resource Discovery</h3>
+      <p>Instantly find study materials and explanations without wasting time searching.</p>
+    </div>
+    <div class="info-card">
+      <div class="ico">⚡</div>
+      <h3>Instant Guidance</h3>
+      <p>Get immediate academic help for any concept, problem, or topic anytime.</p>
+    </div>
+    <div class="info-card">
+      <div class="ico">💡</div>
+      <h3>Concept Clarity</h3>
+      <p>Complex topics broken down into simple, easy-to-understand explanations.</p>
+    </div>
+    <div class="info-card">
+      <div class="ico">🎯</div>
+      <h3>Exam Prep</h3>
+      <p>Practice questions, revision tips, and topic summaries for better scores.</p>
+    </div>
+  </div>
+
+  <div class="by">
+    Developed by <strong>Tanishq Gupta</strong> &nbsp;•&nbsp;
+    <strong>S.B. Jain Institute of Technology, Nagpur</strong>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CHAT PAGE
+══════════════════════════════════════ -->
+<div id="chatpage">
+  <div class="chat-wrap">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-logo">🎓</div>
+      <div class="chat-header-txt">
+        <h2>Study Buddy AI ✨ <span class="online-dot"></span></h2>
+        <p>Tanishq Gupta &nbsp;•&nbsp; S.B. Jain Institute of Technology, Nagpur</p>
+      </div>
+      <button class="back-btn" onclick="goLanding()">← back</button>
+    </div>
+
+    <!-- API Key -->
+    <div id="apiBand">
+      <label>🔑 API key</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-api03-..." />
+      <button class="conn-btn" onclick="connectKey()">connect ⚡</button>
+      <div class="api-note">get free key at console.anthropic.com — stored only in this browser session, never shared</div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="subjects" id="subjects"></div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcome">
+        <div class="w-icon">🌟</div>
+        <h3>heyyy bestie, what are we studying? 📚</h3>
+        <p>no cap, i got answers for literally everything fr fr — pick a subject or just type below. i'm like ur smartest friend who actually does homework lmao</p>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <textarea id="inp" placeholder="ask me anything, no cap... ✨" rows="1"></textarea>
+      <button class="send-btn" id="sendBtn" disabled>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="chat-footer">
+      <span>⚡ Code Sangram Online Hackathon 2026 &nbsp;•&nbsp; AI Domain</span>
+      <button class="clr-btn" onclick="clearChat()">clear chat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── STARS ── */
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2.5+0.8;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+})();
+
+/* ── SUBJECTS DATA ── */
+const SUBS={
+  "🌟 general":["how to study effectively?","create a study schedule for me","what are the best note-taking techniques?","how to overcome exam anxiety?"],
+  "🔢 maths":["explain quadratic equations with examples","how does integration work in calculus?","what are matrices and determinants?","explain probability and statistics"],
+  "⚡ physics":["explain newton's three laws simply","how does electromagnetism work?","what is quantum mechanics?","explain laws of thermodynamics"],
+  "🧪 chemistry":["how do ionic and covalent bonds work?","explain organic chemistry basics","what is stoichiometry?","explain periodic table trends"],
+  "💻 CS":["explain data structures and algorithms","what is object-oriented programming?","how does recursion work?","explain Big O time complexity"],
+  "🌱 biology":["how does DNA replication work?","explain photosynthesis step by step","what is mitosis vs meiosis?","explain the human immune system"],
+  "📝 english":["help me write a strong essay introduction","explain different types of sentences","how to analyze a poem?","tips for improving writing skills"]
+};
+
+let subKey=Object.keys(SUBS)[0],hist=[],loading=false,apiKey='';
+
+/* ── NAVIGATION ── */
+function goChat(){
+  document.getElementById('landing').style.display='none';
+  const cp=document.getElementById('chatpage');
+  cp.style.display='flex';
+  renderSubs();renderChips();
+}
+function goLanding(){
+  document.getElementById('chatpage').style.display='none';
+  document.getElementById('landing').style.display='flex';
+}
+
+/* ── API KEY ── */
+function connectKey(){
+  const v=document.getElementById('apiKey').value.trim();
+  if(!v.startsWith('sk-ant-')){
+    shake(document.getElementById('apiKey'));
+    return;
+  }
+  apiKey=v;
+  const b=document.getElementById('apiBand');
+  b.style.cssText='padding:10px 22px;border-bottom:1px solid rgba(29,158,117,0.2);display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(29,158,117,0.06);flex-shrink:0';
+  b.innerHTML='<span style="font-size:13px;color:#5DCAA5;font-weight:700;">✅ connected! start chatting bestie 🚀</span>';
+  document.getElementById('sendBtn').disabled=false;
+  document.getElementById('inp').focus();
+}
+function shake(el){
+  el.style.animation='none';
+  el.style.borderColor='rgba(212,83,126,0.8)';
+  el.style.transform='translateX(-5px)';
+  setTimeout(()=>{el.style.transform='translateX(5px)'},80);
+  setTimeout(()=>{el.style.transform='translateX(-3px)'},160);
+  setTimeout(()=>{el.style.transform='none';el.style.borderColor=''},240);
+  el.placeholder='enter a valid sk-ant-... key!';
+}
+
+/* ── SUBJECTS ── */
+function renderSubs(){
+  document.getElementById('subjects').innerHTML=
+    Object.keys(SUBS).map(s=>`<button class="spill${s===subKey?' on':''}" onclick="pickSub(${JSON.stringify(s)})">${s}</button>`).join('');
+}
+function renderChips(){
+  const c=document.getElementById('chips');if(!c)return;
+  c.innerHTML=SUBS[subKey].map(q=>`<button class="chip" onclick="send(${JSON.stringify(q)})">${q}</button>`).join('');
+}
+function pickSub(s){subKey=s;renderSubs();renderChips();}
+
+/* ── CHAT ── */
+function addBubble(role,text){
+  const w=document.getElementById('welcome');if(w)w.remove();
+  hist.push({role:role==='user'?'user':'assistant',content:text});
+  const d=document.createElement('div');d.className='msg '+(role==='user'?'user':'bot');
+  if(role!=='user'){
+    const l=document.createElement('div');l.className='bot-lbl';
+    l.textContent='STUDY BUDDY • AI';d.appendChild(l);
+  }
+  const b=document.createElement('div');b.className='bubble';b.textContent=text;
+  d.appendChild(b);
+  const m=document.getElementById('messages');
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function showTyping(){
+  const d=document.createElement('div');d.id='typing';d.className='msg bot';
+  const l=document.createElement('div');l.className='bot-lbl';l.textContent='STUDY BUDDY • AI';
+  const b=document.createElement('div');b.className='bubble tdots';
+  b.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';
+  d.appendChild(l);d.appendChild(b);
+  const m=document.getElementById('messages');m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+async function send(text){
+  text=(text||document.getElementById('inp').value).trim();
+  if(!text||loading)return;
+  if(!apiKey){
+    const b=document.getElementById('apiBand');
+    b.style.background='rgba(212,83,126,0.08)';
+    setTimeout(()=>{b.style.background=''},1000);
+    return;
+  }
+  document.getElementById('inp').value='';
+  document.getElementById('inp').style.height='auto';
+  loading=true;document.getElementById('sendBtn').disabled=true;
+  addBubble('user',text);showTyping();
+
+  const sys=`You are Study Buddy AI — an expert, friendly AI Student Assistant Chatbot for Code Sangram Online Hackathon 2026, built by Tanishq Gupta, S.B. Jain Institute of Technology, Nagpur.
+
+Current subject: ${subKey}
+
+Be the student's smartest, most helpful friend. Explain concepts clearly with examples and step-by-step breakdowns. Be encouraging. Keep answers focused (2-4 paragraphs). Offer to go deeper at the end.`;
+
+  const msgs=hist.filter(m=>m.role==='user'||m.role==='assistant').map(m=>({role:m.role,content:m.content}));
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1024,system:sys,messages:msgs})
+    });
+    const data=await r.json();hideTyping();
+    if(data.error){addBubble('assistant','error: '+data.error.message);loading=false;document.getElementById('sendBtn').disabled=false;return;}
+    const reply=data.content?.map(c=>c.text||'').join('')||"couldn't respond rn, try again!";
+    addBubble('assistant',reply);
+    confetti();
+  }catch(e){
+    hideTyping();
+    addBubble('assistant','oof, connection error! check your API key + internet and try again fr 😭');
+  }
+  loading=false;document.getElementById('sendBtn').disabled=false;document.getElementById('inp').focus();
+}
+
+function clearChat(){
+  hist=[];
+  const m=document.getElementById('messages');m.innerHTML='';
+  const w=document.createElement('div');w.id='welcome';w.className='welcome';
+  w.innerHTML='<div class="w-icon">🌟</div><h3>heyyy bestie, what are we studying? 📚</h3><p>no cap, i got answers for literally everything fr fr — pick a subject or just type below.</p><div class="chips" id="chips"></div>';
+  m.appendChild(w);renderChips();
+}
+
+/* ── CONFETTI ── */
+function confetti(){
+  const cols=['#AFA9EC','#ED93B1','#9FE1CB','#FAC775','#85B7EB','#F4C0D1'];
+  for(let i=0;i<28;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='conf';
+      const sz=Math.random()*7+4;
+      el.style.cssText=`left:${20+Math.random()*60}%;top:60%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};animation-duration:${0.9+Math.random()*0.7}s;animation-delay:${Math.random()*0.3}s;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);setTimeout(()=>el.remove(),1800);
+    },i*20);
+  }
+}
+
+/* ── TEXTAREA AUTO RESIZE + ENTER ── */
+document.getElementById('sendBtn').addEventListener('click',()=>send(document.getElementById('inp').value));
+document.getElementById('inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(document.getElementById('inp').value);}
+});
+document.getElementById('inp').addEventListener('input',function(){
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';
+});
+</script>
+</body>
+</html>
